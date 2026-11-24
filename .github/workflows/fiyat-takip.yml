@@ -1,0 +1,39 @@
+name: Fiyat Takip
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"    # 5 dakikada bir (GitHub yoğunken birkaç dakika geciktirebilir)
+  workflow_dispatch:          # Actions sekmesinden elle çalıştırma
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fiyat-takip
+  cancel-in-progress: false
+
+jobs:
+  calistir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Mesajları işle ve fiyatları kontrol et
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NTFY_EKLE: ${{ secrets.NTFY_EKLE }}
+          NTFY_BILDIRIM: ${{ secrets.NTFY_BILDIRIM }}
+          KONTROL_DAKIKA: "5"
+        run: python bot.py
+      - name: Listeyi kaydet
+        run: |
+          git config user.name "fiyat-takip-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/urunler.json
+          git diff --cached --quiet || (git commit -m "Fiyat listesi güncellendi" && git push)
