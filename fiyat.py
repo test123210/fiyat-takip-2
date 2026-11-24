@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from urllib.parse import parse_qsl, urlsplit, urlunsplit
 
 from bs4 import BeautifulSoup
 from curl_cffi import requests
@@ -144,7 +145,38 @@ def _cerezler(url: str) -> dict | None:
     return None
 
 
+_YONLENDIRME_ALANLARI = ("adjust_redirect", "redirect", "url", "u", "deep_link_value")
+
+
+def kisa_link_coz(url: str) -> str:
+    """ty.gl, adj.st gibi paylaşım kısa linklerini web ürün sayfasına çevirir."""
+    for _ in range(6):
+        host = urlsplit(url).netloc.lower()
+        if any(h in host for h in ("trendyol.com", "superstep.com.tr")) and "adj.st" not in host:
+            break
+        hedef = None
+        for ad, deger in parse_qsl(urlsplit(url).query):
+            if ad in _YONLENDIRME_ALANLARI and deger.startswith("http"):
+                hedef = deger
+                break
+        if not hedef:
+            try:
+                r = _session.get(url, headers=HEADERS, timeout=30, allow_redirects=False)
+            except Exception:
+                break
+            hedef = r.headers.get("location")
+            if not hedef or r.status_code not in (301, 302, 303, 307, 308):
+                break
+        url = hedef
+    # Trendyol'da takip parametrelerini at, aynı ürün tek kayıt olsun
+    p = urlsplit(url)
+    if "trendyol.com" in p.netloc:
+        url = urlunsplit((p.scheme, p.netloc, p.path, "", ""))
+    return url
+
+
 def fiyat_oku(url: str) -> Sonuc:
+    url = kisa_link_coz(url)
     try:
         r = _session.get(url, headers=HEADERS, timeout=30, allow_redirects=True,
                          cookies=_cerezler(url))
