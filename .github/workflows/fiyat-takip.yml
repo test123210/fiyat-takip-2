@@ -2,11 +2,12 @@ name: Fiyat Takip
 
 on:
   schedule:
-    - cron: "*/5 * * * *"    # 5 dakikada bir (GitHub yoğunken birkaç dakika geciktirebilir)
-  workflow_dispatch:          # Actions sekmesinden elle çalıştırma
+    - cron: "*/5 * * * *"    # yedek: zincir koparsa yeniden başlatır
+  workflow_dispatch:          # her çalışma bitince bir sonrakini kendisi başlatır
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: fiyat-takip
@@ -15,7 +16,7 @@ concurrency:
 jobs:
   calistir:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,3 +38,10 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/urunler.json
           git diff --cached --quiet || (git commit -m "Fiyat listesi güncellendi" && git push)
+      - name: 4 dakika bekle ve bir sonraki çalışmayı başlat
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 240
+          gh workflow run fiyat-takip.yml -R "${{ github.repository }}" --ref main
