@@ -232,8 +232,11 @@ def liste(veri: dict, chat_id) -> None:
 def mesaj_isle(veri: dict, mesaj: dict) -> None:
     chat_id = mesaj["chat"]["id"]
     metin = (mesaj.get("text") or mesaj.get("caption") or "").strip()
-    if metin.split(" ", 1)[0].lower() in KOMUTLAR:
-        metin = "/" + metin  # ntfy'dan eğik çizgisiz komut gelebilir
+    ilk, _, kalan = metin.partition(" ")
+    ilk = ilk.replace("İ", "i").replace("I", "ı").lower().replace("ı", "i").lstrip("/")
+    if ilk in KOMUTLAR:
+        # "yardım", "/Liste", "Sil 3" gibi yazımları da kabul et
+        metin = f"/{ilk} {kalan}".strip()
 
     if not CHAT_ID:
         print(f"SOHBET_KIMLIGI={chat_id}")
