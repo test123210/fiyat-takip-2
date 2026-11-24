@@ -1,6 +1,49 @@
 {
   "offset": 0,
-  "sonraki_id": 1,
-  "urunler": [],
-  "ntfy_since": "JU1grzXKF5aZ"
+  "sonraki_id": 3,
+  "urunler": [
+    {
+      "id": 1,
+      "url": "https://www.trendyol.com/pull-bear/duz-kesim-jean-p-1118178754",
+      "baslik": "Pull & Bear Düz kesim jean",
+      "para": "TRY",
+      "fiyat": 1990.0,
+      "ilk_fiyat": 1990.0,
+      "en_dusuk": 1990.0,
+      "stokta": true,
+      "hedef": null,
+      "hedef_bildirildi": false,
+      "eklendi": "2026-11-24T11:37:58+00:00",
+      "son_kontrol": "2026-11-24T11:37:58+00:00",
+      "hata_sayisi": 0,
+      "gecmis": [
+        [
+          "2026-11-24T11:37:58+00:00",
+          1990.0
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://www.superstep.com.tr/urun/lacoste-ag-lt-evo-erkek-beyaz-sneaker/752sma0071-3/",
+      "baslik": "Lacoste AG-LT Evo Erkek Beyaz Sneaker",
+      "para": "TRY",
+      "fiyat": 7490.0,
+      "ilk_fiyat": 7490.0,
+      "en_dusuk": 7490.0,
+      "stokta": true,
+      "hedef": null,
+      "hedef_bildirildi": false,
+      "eklendi": "2026-11-24T11:38:00+00:00",
+      "son_kontrol": "2026-11-24T11:38:00+00:00",
+      "hata_sayisi": 0,
+      "gecmis": [
+        [
+          "2026-11-24T11:38:00+00:00",
+          7490.0
+        ]
+      ]
+    }
+  ],
+  "ntfy_since": "JMJVt1n7KGVn"
 }
